@@ -2,12 +2,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '../../UI-reuseable/Button';
 import { formatCurrency } from '../../utils/helpers';
-import {
-  addItem,
-  getCurrQuantityById,
-  increaseItemQuantity,
-} from '../cart/cartSlice';
+import { addItem, getCurrQuantityById } from '../cart/cartSlice';
 import DeleteItem from '../cart/DeleteItem';
+import UpdateItemQuantity from '../cart/UpdateItemQuantity';
 function MenuItem({ pizza }) {
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
   const dispatch = useDispatch();
@@ -24,10 +21,7 @@ function MenuItem({ pizza }) {
     };
     dispatch(addItem(newItem));
   }
-  function handleIncrease(e) {
-    e.preventDefault();
-    dispatch(increaseItemQuantity(id));
-  }
+
   return (
     <li className="flex gap-4" key={id}>
       <img
@@ -49,20 +43,15 @@ function MenuItem({ pizza }) {
             </p>
           )}
           {!soldOut && !isInCart && (
-            <>
-              {' '}
-              <Button onClick={handleAddToCart} type="small">
-                Add to Cart
-              </Button>
-            </>
+            <Button onClick={handleAddToCart} type="small">
+              Add to Cart
+            </Button>
           )}
           {isInCart && (
-            <>
-              <Button onClick={handleIncrease} type="small">
-                {`Increase (${currentQuantity})`}
-              </Button>{' '}
+            <div className="flex items-center gap-3 sm:gap-8 ">
+              <UpdateItemQuantity pizzaId={id} />
               <DeleteItem id={id} />
-            </>
+            </div>
           )}
         </div>
       </div>
