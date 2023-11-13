@@ -1,7 +1,7 @@
 import { Form, redirect, useActionData, useNavigation } from 'react-router-dom';
 import { createOrder } from '../../services/apiRestaurant';
 import Button from '../../UI-reuseable/Button';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearCart, getCart, getTotalCartPrice } from '../cart/cartSlice';
 import EmptyCart from '../cart/EmptyCart';
 import store from '../../store.js';
@@ -42,7 +42,7 @@ const isValidPhone = (str) =>
 
 function CreateOrder() {
   const username = useSelector((state) => state.user.username);
-
+  const dispatch = useDispatch();
   const [withPriority, setWithPriority] = useState(false);
   const navigation = useNavigation();
   // eslint-disable-next-line no-unused-vars
@@ -58,6 +58,9 @@ function CreateOrder() {
     <div className="">
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Lets go!</h2>
 
+      <button onClick={() => dispatch(fetchAddress)} type="small">
+        GetLocation!
+      </button>
       <Form method="POST" action="/order/new">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">First Name</label>
@@ -92,9 +95,6 @@ function CreateOrder() {
               required
             />
           </div>
-          <Button onClick={() => fetchAddress()} type="small">
-            GetLocation!
-          </Button>
         </div>
 
         <div className="mb-12 flex items-center gap-5">
