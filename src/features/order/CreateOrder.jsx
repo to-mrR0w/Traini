@@ -90,6 +90,7 @@ function CreateOrder() {
               required
             />
           </div>
+          <Button onClick={()=>} type="small">GetLocation!</Button>
         </div>
 
         <div className="mb-12 flex items-center gap-5">
