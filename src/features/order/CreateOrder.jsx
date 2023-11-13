@@ -7,6 +7,8 @@ import EmptyCart from '../cart/EmptyCart';
 import store from '../../store.js';
 import { formatCurrency } from '../../utils/helpers.js';
 import { useState } from 'react';
+import { fetchAddress } from '../user/userSlice.js';
+
 // https://uibakery.io/regex-library/phone-number
 // eslint-disable-next-line no-unused-vars
 const isValidPhone = (str) =>
@@ -90,7 +92,9 @@ function CreateOrder() {
               required
             />
           </div>
-          <Button onClick={()=>} type="small">GetLocation!</Button>
+          <Button onClick={() => fetchAddress()} type="small">
+            GetLocation!
+          </Button>
         </div>
 
         <div className="mb-12 flex items-center gap-5">
