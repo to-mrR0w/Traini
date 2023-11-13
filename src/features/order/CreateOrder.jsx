@@ -58,7 +58,7 @@ function CreateOrder() {
     <div className="">
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Lets go!</h2>
 
-      <button onClick={() => dispatch(fetchAddress)} type="small">
+      <button onClick={() => dispatch(fetchAddress())} type="small">
         GetLocation!
       </button>
       <Form method="POST" action="/order/new">
