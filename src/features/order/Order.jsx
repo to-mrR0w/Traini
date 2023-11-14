@@ -100,7 +100,8 @@ function Order() {
             item={item}
             key={item.pizzaId}
             ingredients={
-              fetcher.data?.find((el) => el.id === item.pizzaId).ingredients
+              fetcher?.data?.find((el) => el.id === item.pizzaId).ingredients ??
+              []
             }
           />
         ))}
