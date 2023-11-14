@@ -50,7 +50,14 @@ function CreateOrder() {
 
   const formErrors = useActionData();
   const cart = useSelector(getCart);
+  const {
+    username,
+    status: addresStatus,
+    position,
+    address,
+  } = useSelector((state) => state.user);
   const totalAmount = useSelector(getTotalCartPrice);
+
   const prioPrice = withPriority ? totalAmount * 0.2 : 0;
   const totalPrice = totalAmount + prioPrice;
   if (!cart.length) return <EmptyCart />;
@@ -58,9 +65,6 @@ function CreateOrder() {
     <div className="">
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Lets go!</h2>
 
-      <button onClick={() => dispatch(fetchAddress())} type="small">
-        GetLocation!
-      </button>
       <Form method="POST" action="/order/new">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">First Name</label>
@@ -85,16 +89,29 @@ function CreateOrder() {
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
             <input
               className="input w-full"
               type="text"
+              disabled={isLoadingAddress}
               name="address"
               required
             />
           </div>
+          <span className="absolute right-[3px] z-50">
+            <Button
+              disabled={isLoadingAddress}
+              onClick={(e) => {
+                e.preventDefault();
+                dispatch(fetchAddress());
+              }}
+              type="small"
+            >
+              GetLocation!
+            </Button>
+          </span>
         </div>
 
         <div className="mb-12 flex items-center gap-5">
