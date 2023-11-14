@@ -41,23 +41,20 @@ const isValidPhone = (str) =>
 // ];
 
 function CreateOrder() {
-  const username = useSelector((state) => state.user.username);
   const dispatch = useDispatch();
   const [withPriority, setWithPriority] = useState(false);
   const navigation = useNavigation();
   // eslint-disable-next-line no-unused-vars
   const isSubmitting = navigation.state === 'submitting';
-
-  const formErrors = useActionData();
   const cart = useSelector(getCart);
-  const {
-    username,
-    status: addresStatus,
-    position,
-    address,
-  } = useSelector((state) => state.user);
+  const { username, status, position, address } = useSelector(
+    (state) => state.user,
+  );
+  console.log(position, address);
   const totalAmount = useSelector(getTotalCartPrice);
 
+  const formErrors = useActionData();
+  const isLoadingAddress = status.isLoading === 'loading';
   const prioPrice = withPriority ? totalAmount * 0.2 : 0;
   const totalPrice = totalAmount + prioPrice;
   if (!cart.length) return <EmptyCart />;
@@ -98,6 +95,7 @@ function CreateOrder() {
               disabled={isLoadingAddress}
               name="address"
               required
+              defaultValue={address}
             />
           </div>
           <span className="absolute right-[3px] z-50">
