@@ -15,46 +15,25 @@ const isValidPhone = (str) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
     str,
   );
-
-// const fakeCart = [
-//   {
-//     pizzaId: 12,
-//     name: 'Mediterranean',
-//     quantity: 2,
-//     unitPrice: 16,
-//     totalPrice: 32,
-//   },
-//   {
-//     pizzaId: 6,
-//     name: 'Vegetale',
-//     quantity: 1,
-//     unitPrice: 13,
-//     totalPrice: 13,
-//   },
-//   {
-//     pizzaId: 11,
-//     name: 'Spinach and Mushroom',
-//     quantity: 1,
-//     unitPrice: 15,
-//     totalPrice: 15,
-//   },
-// ];
-
 function CreateOrder() {
-  const dispatch = useDispatch();
   const [withPriority, setWithPriority] = useState(false);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   // eslint-disable-next-line no-unused-vars
   const isSubmitting = navigation.state === 'submitting';
   const cart = useSelector(getCart);
-  const { username, status, position, address } = useSelector(
-    (state) => state.user,
-  );
+  const {
+    username,
+    status: addressStatus,
+    position,
+    address,
+    error: errorAddress,
+  } = useSelector((state) => state.user);
   console.log(position, address);
   const totalAmount = useSelector(getTotalCartPrice);
 
   const formErrors = useActionData();
-  const isLoadingAddress = status.isLoading === 'loading';
+  const isLoadingAddress = addressStatus === 'loading';
   const prioPrice = withPriority ? totalAmount * 0.2 : 0;
   const totalPrice = totalAmount + prioPrice;
   if (!cart.length) return <EmptyCart />;
@@ -97,19 +76,26 @@ function CreateOrder() {
               required
               defaultValue={address}
             />
+            {addressStatus === 'error' && (
+              <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-400">
+                {errorAddress}
+              </p>
+            )}
           </div>
-          <span className="absolute right-[3px] z-50">
-            <Button
-              disabled={isLoadingAddress}
-              onClick={(e) => {
-                e.preventDefault();
-                dispatch(fetchAddress());
-              }}
-              type="small"
-            >
-              GetLocation!
-            </Button>
-          </span>
+          {!position.latitude && (
+            <span className="absolute right-[3px] z-50">
+              <Button
+                disabled={isLoadingAddress}
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch(fetchAddress());
+                }}
+                type="small"
+              >
+                GetLocation!
+              </Button>
+            </span>
+          )}
         </div>
 
         <div className="mb-12 flex items-center gap-5">
@@ -128,6 +114,15 @@ function CreateOrder() {
 
         <div>
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
+          <input
+            type="hidden"
+            name="position"
+            value={
+              position.longitude
+                ? `${position?.latitude},${position?.longitude}`
+                : ''
+            }
+          />
           <Button type="primary" disabeld={isSubmitting}>
             {isSubmitting
               ? 'Placing Order...'
@@ -138,6 +133,7 @@ function CreateOrder() {
     </div>
   );
 }
+// eslint-disable-next-line react-refresh/only-export-components
 export async function createOrderAction({ request }) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
